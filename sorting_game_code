@@ -1,0 +1,92 @@
+import pygame, random, sys
+from pygame.locals import *
+
+SCREEN = pygame.display.set_mode((400,400))
+SCREEN.fill((110, 63, 1))
+x,y = 50,50
+colours: list = []
+randoms_row_1: list = []
+randoms_row_2: list = []
+randoms_row_3: list = []
+
+# player will be able to move the colored books around on their own or press one of the
+# buttons to watch the sorting mechanisms work
+
+def book_colours():
+    global colours
+    for i in range(0,252,17):
+        colours.append(i)
+    for i in range(0,252,17):
+        colours.append(i)    
+def random_books():
+    global colours
+    global randoms_row_1
+    global randoms_row_2
+    global randoms_row_3
+    randoms_row_1.clear()
+    randoms_row_2.clear()
+    randoms_row_3.clear()
+    for _ in range(len(colours)):
+        randoms_row_1.append(random.randint(0, len(colours)))
+    for _ in range(len(colours)):
+        randoms_row_2.append(random.randint(0, len(colours)))
+    for _ in range(len(colours)):
+        randoms_row_3.append(random.randint(0, len(colours)))
+def replace_books():
+    global colours
+    global randoms_row_1
+    global randoms_row_2
+    global randoms_row_3
+    book_x = 50
+    for i in randoms_row_1:
+        print(i)
+        temp = colours[i]
+        if i < 15:
+            pygame.draw.rect(SCREEN, (temp, 0, 0), (book_x, 50, 10, 60))
+        else:
+            pygame.draw.rect(SCREEN, (255, temp, temp), (book_x, 50, 10, 60))
+        book_x += 10
+    book_x = 50
+    for i in randoms_row_2:
+        temp = colours[i]
+        if i < 15:
+            pygame.draw.rect(SCREEN, (temp, 0, 0), (book_x, 50, 10, 60))
+        else:
+            pygame.draw.rect(SCREEN, (255, temp, temp), (book_x, 50, 10, 60))
+        book_x += 10
+    book_x = 50
+    for i in randoms_row_3:
+        temp = colours[i]
+        pygame.draw.rect(SCREEN, (0, 0, temp), (book_x, 270, 10, 60))
+        book_x += 10
+    book_x = 50
+while True:
+    pygame.draw.rect(SCREEN, (255, 255, 0), (x, y, 10, 60), 1)
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                book_colours()
+                random_books()
+                replace_books()
+                colours.clear()
+            if event.key == pygame.K_UP:
+                if y != 50:
+                    y -= 110
+                replace_books()
+            if event.key == pygame.K_DOWN:
+                if y != 270:
+                    y += 110
+                replace_books()
+            if event.key == pygame.K_LEFT:
+                if x != 50:
+                    x -= 10
+                replace_books()
+            if event.key == pygame.K_RIGHT:
+                if x != 340:
+                    x += 10
+                replace_books()
+    pygame.display.update()                      
+
