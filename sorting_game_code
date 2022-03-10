@@ -8,6 +8,9 @@ colours: list = []
 randoms_row_1: list = []
 randoms_row_2: list = []
 randoms_row_3: list = []
+pos_1 = (0,0)
+pos_2 = (0,0)
+
 
 # player will be able to move the colored books around on their own or press one of the
 # buttons to watch the sorting mechanisms work
@@ -17,7 +20,7 @@ def book_colours():
     for i in range(0,252,17):
         colours.append(i)
     for i in range(0,252,17):
-        colours.append(i)    
+        colours.append(i)
 def random_books():
     global colours
     global randoms_row_1
@@ -27,11 +30,11 @@ def random_books():
     randoms_row_2.clear()
     randoms_row_3.clear()
     for _ in range(len(colours)):
-        randoms_row_1.append(random.randint(0, len(colours)))
+        randoms_row_1.append(random.randint(1, len(colours) - 1))
     for _ in range(len(colours)):
-        randoms_row_2.append(random.randint(0, len(colours)))
+        randoms_row_2.append(random.randint(1, len(colours) - 1))
     for _ in range(len(colours)):
-        randoms_row_3.append(random.randint(0, len(colours)))
+        randoms_row_3.append(random.randint(1, len(colours) - 1))
 def replace_books():
     global colours
     global randoms_row_1
@@ -39,7 +42,6 @@ def replace_books():
     global randoms_row_3
     book_x = 50
     for i in randoms_row_1:
-        print(i)
         temp = colours[i]
         if i < 15:
             pygame.draw.rect(SCREEN, (temp, 0, 0), (book_x, 50, 10, 60))
@@ -50,14 +52,17 @@ def replace_books():
     for i in randoms_row_2:
         temp = colours[i]
         if i < 15:
-            pygame.draw.rect(SCREEN, (temp, 0, 0), (book_x, 50, 10, 60))
+            pygame.draw.rect(SCREEN, (0, temp, 0), (book_x, 160, 10, 60))
         else:
-            pygame.draw.rect(SCREEN, (255, temp, temp), (book_x, 50, 10, 60))
+            pygame.draw.rect(SCREEN, (temp, 255, temp), (book_x, 160, 10, 60))
         book_x += 10
     book_x = 50
     for i in randoms_row_3:
         temp = colours[i]
-        pygame.draw.rect(SCREEN, (0, 0, temp), (book_x, 270, 10, 60))
+        if i < 15:
+            pygame.draw.rect(SCREEN, (0, 0, temp), (book_x, 270, 10, 60))
+        else:
+            pygame.draw.rect(SCREEN, (temp, temp, 255), (book_x, 270, 10, 60))
         book_x += 10
     book_x = 50
 while True:
@@ -68,10 +73,10 @@ while True:
             sys.exit()
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
-                book_colours()
+                if len(colours) == 0:
+                    book_colours()
                 random_books()
                 replace_books()
-                colours.clear()
             if event.key == pygame.K_UP:
                 if y != 50:
                     y -= 110
@@ -88,5 +93,33 @@ while True:
                 if x != 340:
                     x += 10
                 replace_books()
+            if event.key == K_z:
+                pygame.draw.rect(SCREEN, (127, 127, 127), (x, y, 10, 60), 1)
+                if pos_1 == (0,0):
+                    pos_1 = (x, y)
+                elif pos_2 == (0,0):
+                    pos_2 = (x, y)
+                else:
+                    pos_1, pos_2 = (0,0), (0,0)
+            if event.key == K_x and pos_1 != (0,0) and pos_2 != (0,0):
+                temp = pos_1
+                pos_1 = pos_2
+                pos_2 = temp
+                if pos_1[1] == 50:
+                    if colours[int(pos_1[0] / 10)] < 15:
+                        pygame.draw.rect(SCREEN, (127, 127, 127), (pos_1[0], 50, 10, 60))
+                    else:
+                        pygame.draw.rect(SCREEN, (127, 127, 127), (pos_1[0], 50, 10, 60))
+                if pos_1[1] == 160:
+                    if colours[pos_1[0] / 10] < 15:
+                        pygame.draw.rect(SCREEN, (127, 127, 127), (pos_1[0], 160, 10, 60))
+                    else:
+                        pygame.draw.rect(SCREEN, (127, 127, 127), (pos_1[0], 160, 10, 60))
+                if pos_1[1] == 270:
+                    if colours[pos_1[0] / 10] < 15:
+                        pygame.draw.rect(SCREEN, (127, 127, 127), (pos_1[0], 270, 10, 60))
+                    else:
+                        pygame.draw.rect(SCREEN, (colours[int(pos_1[0] / 10)], colours[int(pos_1[0] / 10)], 255), (pos_1[0], 270, 10, 60))
+                pos_1 == (0,0)
+                pos_2 == (0,0)
     pygame.display.update()                      
-
